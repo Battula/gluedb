@@ -4,13 +4,13 @@ module Generators::Reports
     include ActionView::Helpers::NumberHelper
 
     DURATION = 12
-    CALENDER_YEAR = 2014
+    CALENDER_YEAR = 2015
 
     NS = { 
       "xmlns" => "urn:us:gov:treasury:irs:common",
       "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
-      # "xmlns:n1" => "urn:us:gov:treasury:irs:msg:monthlyexchangeperiodicdata"
-      "xmlns:n1" => "urn:us:gov:treasury:irs:msg:sbmpolicylevelenrollment"  # CMS
+      "xmlns:n1" => "urn:us:gov:treasury:irs:msg:monthlyexchangeperiodicdata"
+      # "xmlns:n1" => "urn:us:gov:treasury:irs:msg:sbmpolicylevelenrollment"  # CMS
     }
 
     attr_accessor :folder_path
@@ -30,8 +30,8 @@ module Generators::Reports
     def builder
       Nokogiri::XML::Builder.new do |xml|
         xml['n1'].HealthExchange(NS) do
-          xml.SubmissionYr 2015
-          xml.SubmissionMonthNum "07"
+          xml.SubmissionYr Date.today.year.to_s
+          xml.SubmissionMonthNum Date.today.month.to_s
           xml.ApplicableCoverageYr CALENDER_YEAR
           xml.IndividualExchange do |xml|
             xml.HealthExchangeId "02.DC*.SBE.001.001"
@@ -84,6 +84,7 @@ module Generators::Reports
     def serialize_tax_individual(xml, individual, relation)
       return if individual.blank?
       xml.send("#{relation}Grp") do |xml|
+        relation = 'DependentPerson' if relation == 'Dependent'          
         xml.send(relation) do |xml|
           serialize_names(xml, individual)
           xml.SSN individual.ssn unless individual.ssn.blank?
@@ -122,7 +123,6 @@ module Generators::Reports
 
       aptc = montly_disposition.monthly_aptc
       aptc = 0 if aptc.blank?
-      
       xml.AssociatedPolicy do |xml|
         xml.QHPPolicyNum policy.policy_id
         xml.QHPIssuerEIN policy.issuer_fein
@@ -155,14 +155,19 @@ module Generators::Reports
         xml.InsuranceCoverage do |xml|
           xml.ApplicableCoverageMonthNum prepend_zeros(premium.serial.to_s, 2)
           xml.QHPPolicyNum policy.policy_id
-          xml.QHPId policy.qhp_id # CMS
+          # xml.QHPId policy.qhp_id # CMS
           xml.PediatricDentalPlanPremiumInd "N"
           xml.QHPIssuerEIN policy.issuer_fein
-          xml.IssuerNm policy.issuer_name
+          xml.IssuerNm policy.issuer_dc_name
           xml.PolicyCoverageStartDt date_formatter(policy.recipient.coverage_start_date)
           xml.PolicyCoverageEndDt date_formatter(policy.recipient.coverage_termination_date)
           xml.TotalQHPMonthlyPremiumAmt premium.premium_amount
           xml.APTCPaymentAmt monthly_aptc 
+
+          if policy.covered_household_as_of(premium.serial, CALENDER_YEAR).empty?
+            raise "Missing enrollees #{policy.policy_id} #{premium.serial} #{CALENDER_YEAR}"
+          end
+
           policy.covered_household_as_of(premium.serial, CALENDER_YEAR).each do |individual|
             serialize_covered_individual(xml, individual)
           end

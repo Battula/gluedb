@@ -3,12 +3,14 @@ require 'csv'
 module Generators::Reports  
   class IrsMonthlySerializer
 
-    CALENDER_YEAR = 2014
+    CALENDER_YEAR = 2016
 
     def initialize
       @logger = Logger.new("#{Rails.root}/log/h36_exceptions.log")
 
       @carriers = Carrier.all.inject({}){|hash, carrier| hash[carrier.id] = carrier.name; hash}
+      puts @carriers.inspect
+      
       @policy_family_hash = {}
 
       @h36_root_folder = "#{Rails.root}/irs/h36_#{Time.now.strftime('%m_%d_%Y_%H_%M')}"
@@ -31,8 +33,18 @@ module Generators::Reports
       # families_with_no_coverage = 0
       # missing_active_enrollments = 0
 
+      book = Spreadsheet.open "#{Rails.root}/EXCLUSION_2015_H41_EOY_201602111545.xls"
+      skip_list = book.worksheets.first.inject([]){|data, row| data << row[0].to_s.strip.to_i}.compact
+
       start = Time.now
       Family.all.each do |family|
+
+      # [52428, 52918, 55598, 53303, 55584, 55577].inject([]){|families, policy_id|
+      #   families << Family.where("family_members.person_id" => Moped::BSON::ObjectId.from_string(Policy.find(policy_id).subscriber.person.id)).first
+      # }.each do |family|
+
+        # puts family.e_case_id.inspect
+
         current += 1
 
         if current % 100 == 0
@@ -57,13 +69,18 @@ module Generators::Reports
             next
           end
 
-          # active_pols = active_enrollments.map(&:policy)
-
-          if family.irs_groups.empty?
-            missing_irs_groups << family.e_case_id
-            puts "e_case_id --------- #{family.e_case_id}"
+          active_pols = active_enrollments.map(&:policy)
+          if active_pols.detect{|x| skip_list.include?(x.id) }
             next
           end
+
+          if family.irs_groups.empty?
+            # missing_irs_groups << family.e_case_id
+            # puts "e_case_id --------- #{family.e_case_id}"
+            next
+          end
+
+          # next unless family.active_household.tax_households.size == 0
 
           # non_authority_pols = active_enrollments.count { |enrollment| !enrollment.policy.belong_to_authority_member? }
           # if non_authority_pols > 0
@@ -85,16 +102,17 @@ module Generators::Reports
 
           active_enrollments = nil
 
-          # if family.family_members.any? {|x| x.person.authority_member.ssn == '999999999' }
-          #   puts "ssn with all 9's --- #{family.e_case_id.inspect}"
-          #   next
-          # end
+          if family.family_members.any? {|x| x.person.authority_member.ssn == '999999999' }
+            # puts "ssn with all 9's --- #{family.e_case_id.inspect}"
+            next
+          end
 
-          # if family.active_household.tax_households.count > 1
-          #   multiple_taxhouseholds << family.e_case_id
-          # elsif family.active_household.tax_households.count == 0
-          #   puts "-----no tax household----#{family.e_case_id}"
-          # end
+          if family.active_household.tax_households.count > 1
+            # multiple_taxhouseholds << family.e_case_id
+            # puts "---multiple tax households present"
+          elsif family.active_household.tax_households.count == 0
+            # puts "-----no tax household----#{family.e_case_id}"
+          end
 
           # family.active_household.tax_households.each do |th|
           #   th.primary
@@ -104,15 +122,15 @@ module Generators::Reports
 
           irs_group = build_irs_group(family)
 
-          # if irs_group.insurance_policies.empty?
-          #   puts "insurance policies empty --- #{family.e_case_id.inspect}"
-          #   next
-          # end
+          if irs_group.insurance_policies.empty?
+            # puts "insurance policies empty --- #{family.e_case_id.inspect}"
+            next
+          end
 
-          # if irs_group.insurance_policies.any?{|policy| policy.no_coverage? || policy.no_premium_amount? }
-          #   puts "family has wrong policy --- #{family.e_case_id.inspect}"
-          #   next
-          # end
+          if irs_group.insurance_policies.any?{|policy| policy.no_coverage? || policy.no_premium_amount? }
+            # puts "family has wrong policy --- #{family.e_case_id.inspect}"
+            next
+          end
 
           # if irs_group.households[0].tax_households.empty?
           #   puts "EMPTY TAX HOUSEHOLDS #{family.e_case_id}"
@@ -123,6 +141,9 @@ module Generators::Reports
           #   puts "EMPTY TAX PRIMARY #{family.e_case_id}"
           #   next
           # end
+
+
+          # puts irs_group.policies.inspect
 
           group_xml = IrsMonthlyXml.new(irs_group, family.e_case_id)
           group_xml.folder_path = "#{@h36_root_folder}/#{@h36_folder_name}"
@@ -153,20 +174,19 @@ module Generators::Reports
       merge_and_validate_xmls(folder_count)
       create_manifest
 
-      # true
-      # puts count
+
+      puts count
+      # puts multiple
+
       # puts missing_irs_groups.inspect
       # puts missing_irs_groups.count
 
       # puts multiple_taxhouseholds.count
       # puts multiple_taxhouseholds.inspect
 
-      puts count
-
       # puts non_auth_families
       # puts non_auth_pols
       # puts families_with_no_coverage
-
       # puts missing_active_enrollments
     end
 
@@ -199,6 +219,7 @@ module Generators::Reports
     def merge_and_validate_xmls(folder_count)
       folder_num = prepend_zeros(folder_count.to_s, 5)
       xml_merge = Generators::Reports::IrsXmlMerger.new("#{@h36_root_folder}/#{@h36_folder_name}", folder_num)
+      xml_merge.irs_monthly_folder = @h36_root_folder
       xml_merge.process
       xml_merge.validate
     end
