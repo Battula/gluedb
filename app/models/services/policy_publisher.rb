@@ -9,7 +9,8 @@ module Services
       p_action = policy_action(policy)
       reason = (p_action.downcase == "initial_enrollment") ? "initial_enrollment" : p_action.downcase
       operation = (p_action.downcase == "initial_enrollment") ? "add" : "change"
-      v_destination = (p_action.downcase == "initial_enrollment") ? "hbx.enrollment_messages" : "hbx.maintenance_messages"
+      v_destination = "#{ExchangeInformation.hbx_id}.#{ExchangeInformation.environment}.q.legacy_carrier_encoder"
+#      v_destination = (p_action.downcase == "initial_enrollment") ? "hbx.enrollment_messages" : "hbx.maintenance_messages"
       routing_key = case reason
       when "renewal"
         "policy.renewal"

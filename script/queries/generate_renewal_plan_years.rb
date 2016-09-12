@@ -1,7 +1,7 @@
-clone_start_date = Date.new(2015,3,1) # This is the 2014 date plan year start for who needs to be renewed. 
+clone_start_date = Date.new(2015,8,1) # This is the 2014 date plan year start for who needs to be renewed.
 
-new_start_date = Date.new(2016,3,1) # This is the new plan year. 
-new_end_date = Date.new(2017,2,28) # This is the end of the plan year. 
+new_start_date = Date.new(2016,8,1) # This is the new plan year.
+new_end_date = Date.new(2017,7,31) # This is the end of the plan year.
 
 plan_years = PlanYear.where(:start_date => clone_start_date)
 

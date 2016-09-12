@@ -60,13 +60,13 @@ def is_cancel_garbage?(nfp_row)
   c_end <= c_start
 end
 
-CSV.foreach("congressional_audit.csv", headers: true) do |row|
+CSV.foreach("non_congressional_audit.csv", headers: true) do |row|
   h_row = row.to_hash
   h_row.merge!(:pre_amt_tot => premium_total_amount(h_row["Premium Total"]))
   hbx_rows << [h_row, row.fields]
 end
 
-CSV.foreach("CongressAudit.csv", headers: true) do |row|
+CSV.foreach("NonCongressAudit.csv", headers: true, :encoding => 'windows-1251:utf-8' ) do |row|
   data = row.to_hash
   if !is_cancel_garbage?(data)
     h_row = row.to_hash
@@ -75,7 +75,7 @@ CSV.foreach("CongressAudit.csv", headers: true) do |row|
   end
 end
 
-CSV.open("nfp_only.csv", "w") do |csv|
+CSV.open("non_con_nfp_only.csv", "w") do |csv|
   nfp_rows.each do |nfp_row|
     unless (hbx_rows.any? { |h_row| match_row?(nfp_row.first, h_row.first) })
       puts nfp_row.first.inspect
@@ -84,7 +84,7 @@ CSV.open("nfp_only.csv", "w") do |csv|
   end
 end
 
-CSV.open("hbx_only.csv", "w") do |csv|
+CSV.open("non_con_hbx_only.csv", "w") do |csv|
   hbx_rows.each do |hbx_row|
     unless (nfp_rows.any? { |n_row| match_row?(n_row.first, hbx_row.first) })
       csv << hbx_row.last

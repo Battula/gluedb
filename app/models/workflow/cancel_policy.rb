@@ -5,7 +5,7 @@ module Workflow
     def call(p_id)
       policy = Policy.where(:id => p_id).first
       routing_key = "policy.cancel"
-      v_destination = "hbx.maintenance_messages"
+      v_destination = "#{ExchangeInformation.hbx_id}.#{ExchangeInformation.environment}.q.legacy_carrier_encoder"
       operation = "cancel"
       reason = "termination_of_benefits"
 

@@ -3,11 +3,11 @@ require 'csv'
 hbx_records = []
 nfp_records = []
 
-CSV.foreach("nfp_only.csv") do |row|
+CSV.foreach("non_con_nfp_only.csv") do |row|
   nfp_records << (row + ["NFP"])
 end
 
-CSV.foreach("hbx_only.csv") do |row|
+CSV.foreach("non_con_hbx_only.csv") do |row|
   hbx_records << (row + ["HBX"])
 end
 
@@ -20,7 +20,7 @@ rest_hbx = rest.select { |ag| ag.last.last == "HBX" }
 
 timestamp = Time.now.strftime('%Y%m%d%H%M')
 
-CSV.open("audit_issues_con#{timestamp}.csv", "w") do |csv|
+CSV.open("audit_issues_non_con#{timestamp}.csv", "w") do |csv|
   csv << ["Multiple Policies"]
 
   mismatches.each do |v|

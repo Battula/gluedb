@@ -61,7 +61,7 @@ module CanonicalVocabulary
       emp = employer_lookup(@policy)
       if !emp.nil?
         xml['emp'].employer do |xml|
-          xml['emp'].name(emp.name)
+          xml['emp'].name(emp.dba.blank?  ? emp.name : emp.dba)
           xml['emp'].exchange_employer_id(emp.hbx_id)
           xml['emp'].fein(emp.fein)
         end

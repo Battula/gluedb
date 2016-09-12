@@ -1,6 +1,9 @@
 require 'csv'
 # dental_plan_ids = Plan.where({"coverage_type" => "dental"}).map(&:id).map { |tid| Moped::BSON::ObjectId.from_string(tid) }
 
+timey = Time.now
+puts "Report started at #{timey}"
+
 policies = Policy.no_timeout.where(
   {"eg_id" => {"$not" => /DC0.{32}/}}
 )
@@ -75,3 +78,6 @@ CSV.open("saadi_report_#{timestamp}.csv", 'w') do |csv|
     end
   end
 end
+
+timey2 = Time.now
+puts "Report ended at #{timey2}"

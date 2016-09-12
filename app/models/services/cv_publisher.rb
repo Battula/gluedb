@@ -8,7 +8,8 @@ module Services
 
     def publish(is_maintenance, file_name, data)
       return if Rails.env.test?
-      tag = is_maintenance ? "hbx.maintenance_messages" : "hbx.enrollment_messages"
+#      tag = is_maintenance ? "hbx.maintenance_messages" : "hbx.enrollment_messages"
+      tag = "#{ExchangeInformation.hbx_id}.#{ExchangeInformation.environment}.q.legacy_carrier_encoder"
       conn = AmqpConnectionProvider.start_connection
       ch = conn.create_channel
       ch.confirm_select
