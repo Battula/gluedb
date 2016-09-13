@@ -8,8 +8,7 @@ policies = Policy.no_timeout.where(
             :coverage_start => {"$gt" => Date.new(2014,12,31)}}}}
 )
 
-policies = policies.reject{|pol| pol.market == 'individual' && !pol.subscriber.nil? &&(pol.subscriber.coverage_start.year == 2014||pol.subscriber.coverage_start.year == 2015) }
-
+policies = policies.reject{|pol| pol.market == 'individual' && !pol.subscriber.nil? &&pol.subscriber.coverage_start.year == 2014 }
 
 def bad_eg_id(eg_id)
   (eg_id =~ /\A000/) || (eg_id =~ /\+/)
@@ -20,12 +19,12 @@ timestamp = Time.now.strftime('%Y%m%d%H%M')
 Caches::MongoidCache.with_cache_for(Carrier, Plan, Employer) do
 
   CSV.open("stephen_expected_effectuated_20140930_#{timestamp}.csv", 'w') do |csv|
-    csv << ["Subscriber ID", "Member ID" , "Policy ID", "Enrollment Group ID",
+    csv << ["Subscriber ID", "Member ID" , "Person ID", "Policy ID",
             "First Name", "Last Name","SSN", "DOB", "Gender", "Relationship",
-            "Plan Name", "HIOS ID", "Plan Metal Level", "Carrier Name",
+            "Plan Name", "HIOS ID", "Carrier Name",
             "Premium Amount", "Premium Total", "Policy APTC", "Policy Employer Contribution",
             "Coverage Start", "Coverage End",
-            "Employer Name", "Home Address", "Mailing Address","Email","Phone Number","Broker"]
+            "Employer Name", "Address","Email","Phone Number","Broker"]
     policies.each do |pol|
       if !bad_eg_id(pol.eg_id)
         if !pol.subscriber.nil?
@@ -58,19 +57,18 @@ Caches::MongoidCache.with_cache_for(Carrier, Plan, Employer) do
               #if !en.canceled?
                 per = en.person
                 csv << [
-                  subscriber_id, en.m_id, pol._id, pol.eg_id,
+                  subscriber_id, en.m_id, per.id, pol.id,
                   per.name_first,
                   per.name_last,
                   en.member.ssn,
                   en.member.dob.strftime("%Y%m%d"),
                   en.member.gender,
                   en.rel_code,
-                  plan.name, plan.hios_plan_id, plan.metal_level, carrier.name,
+                  plan.hios_plan_id, plan.name, carrier.name,
                   en.pre_amt, pol.pre_amt_tot,pol.applied_aptc, pol.tot_emp_res_amt,
                   en.coverage_start.blank? ? nil : en.coverage_start.strftime("%Y%m%d"),
                   en.coverage_end.blank? ? nil : en.coverage_end.strftime("%Y%m%d"),
-                  pol.employer_id.blank? ? nil : employer.fein,
-                  per.home_address.try(:full_address) || pol.subscriber.person.home_address.try(:full_address),
+                  pol.employer_id.blank? ? nil : employer.name,
                   per.mailing_address.try(:full_address) || pol.subscriber.person.mailing_address.try(:full_address),
                   per.emails.first.try(:email_address), per.phones.first.try(:phone_number), broker
                 ]

@@ -33,7 +33,7 @@ m_cache = Caches::MemberCache.new(m_ids)
 Caches::MongoidCache.allocate(Plan)
 Caches::MongoidCache.allocate(Carrier)
 
-active_end = Date.new(2016,7,31)
+active_end = Date.new(2016,1,31)
 
 eligible_pols.each do |pol|
   if !pol.canceled?

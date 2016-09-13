@@ -20,7 +20,7 @@ rest_hbx = rest.select { |ag| ag.last.last == "HBX" }
 
 timestamp = Time.now.strftime('%Y%m%d%H%M')
 
-CSV.open("audit_issues_con#{timestamp}.csv", "w") do |csv|
+CSV.open("audit_issues_#{timestamp}.csv", "w") do |csv|
   csv << ["Multiple Policies"]
 
   mismatches.each do |v|
@@ -35,7 +35,7 @@ CSV.open("audit_issues_con#{timestamp}.csv", "w") do |csv|
   csv << ["Single Policies - HBX Only", "These individuals have only one policy for 2015, and that policy is only with the HBX"]
   rest_hbx.each do |v|
     v.each do |row|
-      csv << row
+      csv << row 
     end
   end
 
@@ -44,7 +44,7 @@ CSV.open("audit_issues_con#{timestamp}.csv", "w") do |csv|
   csv << ["Single Policies - NFP Only", "These individuals have only one policy for 2015, and that policy is only with NFP."]
   rest_nfp.each do |v|
     v.each do |row|
-      csv << row
+      csv << row 
     end
   end
 end

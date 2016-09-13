@@ -22,7 +22,8 @@ headers = [
   "Employer Name"
 ]
 
-congress_feins = %w()
+congress_feins = %w(
+)
 
 emp_ids = Employer.where(:fein => {"$nin" => congress_feins }).map(&:id)
 
@@ -40,7 +41,7 @@ def format_date(date)
   date.strftime("%Y-%m-%d")
 end
 
-CSV.open("non_congressional_audit.csv", "w", ) do |csv|
+CSV.open("congressional_audit.csv", "w") do |csv|
   csv << headers
   pols.each do |pol|
     start_date = pol.subscriber.coverage_start
