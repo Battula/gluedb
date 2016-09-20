@@ -56,7 +56,8 @@ module Listeners
         :name_middle => Maybe.new(xml.at_xpath("//v:person/v:person_name/v:person_middle_name", VOCAB_NS)).content.value,
         :name_pfx => Maybe.new(xml.at_xpath("//v:person/v:person_name/v:person_name_prefix_text", VOCAB_NS)).content.value,
         :name_sfx => Maybe.new(xml.at_xpath("//v:person/v:person_name/v:person_name_suffix_text", VOCAB_NS)).content.value,
-        :npn => Maybe.new(xml.at_xpath("//v:broker_role/v:npn", VOCAB_NS)).content.value
+        :npn => Maybe.new(xml.at_xpath("//v:broker_role/v:npn", VOCAB_NS)).content.value,
+        :b_type => "broker"
       }
     end
 

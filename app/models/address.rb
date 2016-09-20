@@ -48,6 +48,12 @@ class Address
     attrs_to_match.all? { |attr| attribute_matches?(attr, another_address) }
   end
 
+  def same_location?(another_address)
+    return(false) if another_address.nil?
+    attrs_to_match = [:address_1, :address_2, :city, :state, :zip]
+    attrs_to_match.all? { |attr| attribute_matches?(attr, another_address) }
+  end
+
   def attribute_matches?(attribute, other)
     return true if (self[attribute].blank? && other[attribute].blank?)
     safe_downcase(self[attribute]) == safe_downcase(other[attribute])

@@ -148,8 +148,31 @@ module CanonicalVocabulary
       en.coverage_end <= @term_before_date
     end
 
+    def determine_addresses_to_serialize(person)
+      home_address = person.home_address
+      mailing_address = person.addresses.detect { |adr| adr.address_type == "mailing" }
+      if home_address.nil?
+        if mailing_address.nil?
+          []
+        else
+          [mailing_address]
+        end
+      else
+        if mailing_address.nil?
+          [home_address]
+        else
+          if home_address.same_location?(mailing_address)
+            [home_address]
+          else
+            [home_address, mailing_address]
+          end
+        end
+      end
+    end
+
     def serialize_address(person, xml)
-      person.addresses.each do |addr|
+      given_addresses = determine_addresses_to_serialize(person)
+      given_addresses.each do |addr|
         xml['con'].address do |xml|
           xml['con'].address_type(addr.address_type.strip)
           xml['con'].address do |xml|

@@ -173,6 +173,18 @@ module ChangeSets
       resource.gender != member.gender
     end
 
+    def dropping_subscriber_home_address?
+      return false unless individual_exists?
+      policies_to_transmit = determine_policies_to_transmit
+      return false if policies_to_transmit.blank?
+      home_address = @resource.addresses.detect { |au| au.address_type == "home" }
+      return false if home_address
+      policies_to_transmit.any? do |pol|
+        sub = pol.subscriber
+        sub.m_id == member.hbx_member_id
+      end
+    end
+
     protected
 
     def determine_policies_to_transmit

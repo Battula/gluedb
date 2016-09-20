@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe ::ChangeSets::IndividualChangeSet do
-  let(:remote_resource) { double(:exists? => remote_resource_exists, :record => existing_record) }
+  let(:remote_resource) { instance_double("::RemoteResources::Individual", :exists? => remote_resource_exists, :record => existing_record) }
 
   let(:changeset) { ::ChangeSets::IndividualChangeSet.new(remote_resource) }
   context "with a record that already exists" do
@@ -121,6 +121,45 @@ describe ::ChangeSets::IndividualChangeSet do
       allow(mobile_phone_changer).to receive(:applicable?).with(existing_record, remote_resource).and_return(mobile_phone_changed)
       allow(home_email_changer).to receive(:applicable?).with(existing_record, remote_resource).and_return(home_email_changed)
       allow(work_email_changer).to receive(:applicable?).with(existing_record, remote_resource).and_return(work_email_changed)
+    end
+
+    describe "dropping the home address" do
+      before :each do
+        allow(remote_resource).to receive(:addresses).and_return([mailing_address, work_address])
+      end
+
+      let(:mailing_address) {
+        instance_double("::RemoteResources::Address", :address_type => "mailing")
+      }
+      let(:work_address) {
+        instance_double("::RemoteResources::Address", :address_type => "work")
+      }
+
+      describe "with existing policies" do
+        before(:each) do
+          allow(changeset).to receive(:determine_policies_to_transmit).and_return([policy])
+        end
+        
+        let(:policy) { double(:subscriber => subscriber) }
+        let(:subscriber) { double(:m_id => subscriber_member_id_value) }
+
+        describe "where the member is a subscriber" do
+          let(:subscriber_member_id_value) { member_id }
+          describe "#dropping_subscriber_home_address?" do
+            subject { changeset.dropping_subscriber_home_address? }
+            it { is_expected.to be_truthy }
+          end
+        end
+
+        describe "where the member is NOT a subscriber" do
+          let(:subscriber_member_id_value) { "somebody elses id" }
+          describe "#dropping_subscriber_home_address?" do
+            subject { changeset.dropping_subscriber_home_address? }
+            it { is_expected.to be_falsey}
+          end
+        end
+      end
+
     end
 
     describe "#individual_exists?" do

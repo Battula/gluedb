@@ -165,7 +165,7 @@ describe Listeners::IndividualEventListener do
     }
 
     let(:individual_change_set) {
-      instance_double("::ChangeSets::IndividualChangeSet", :individual_exists? => true, :any_changes? => changed_value, :multiple_changes? => multiple_changes_result, :dob_changed? => dob_change_result, :full_error_messages => full_error_messages)
+      instance_double("::ChangeSets::IndividualChangeSet", :individual_exists? => true, :any_changes? => changed_value, :multiple_changes? => multiple_changes_result, :dob_changed? => dob_change_result, :full_error_messages => full_error_messages, :dropping_subscriber_home_address? => drop_subscriber_address_result)
     }
 
     let(:individual_updated_properties) { {
@@ -179,6 +179,15 @@ describe Listeners::IndividualEventListener do
 
     let(:individual_update_error_properties) { {
       :routing_key => "error.application.gluedb.individual_update_event_listener.individual_updated",
+      :headers => {
+        :return_status => "422",
+        :individual_id => individual_id, 
+        :submitted_timestamp => timestamp
+      }
+    } }
+
+    let(:individual_drop_subscriber_address_properties) { {
+      :routing_key => "error.application.gluedb.individual_update_event_listener.subscriber_home_address_required",
       :headers => {
         :return_status => "422",
         :individual_id => individual_id, 
@@ -207,6 +216,7 @@ describe Listeners::IndividualEventListener do
     let(:multiple_changes_result) { false}
     let(:dob_change_result) { false}
     let(:full_error_messages) { ["a", "list of", "error messages"] }
+    let(:drop_subscriber_address_result) { false }
 
     before :each do
       allow(RemoteResources::IndividualResource).to receive(:retrieve).with(subject, individual_id).and_return(["200", new_individual_resource])
@@ -230,6 +240,17 @@ describe Listeners::IndividualEventListener do
       let(:multiple_changes_result) { false}
       let(:changed_value) { true }
 
+      describe "and the change is for a subscriber and has no home address" do
+        let(:drop_subscriber_address_result) { true }
+
+        before(:each) do
+          allow(channel).to receive(:ack).with(delivery_tag, false)
+          allow(event_broadcaster).to receive(:broadcast).with(individual_drop_subscriber_address_properties, "a body value for the resource")
+        end
+
+        it_should_behave_like "a listener consuming the message"
+        it_should_behave_like "a listener recording the event outcome", :individual_drop_subscriber_address_properties, "a body value for the resource"
+      end
 
       describe "and that change is to dob" do
         let(:dob_change_result) { true }
@@ -277,6 +298,18 @@ describe Listeners::IndividualEventListener do
     describe "with multiple changes" do
       let(:multiple_changes_result) { true }
       let(:changed_value) { true }
+
+      describe "and the change is for a subscriber and has no home address" do
+        let(:drop_subscriber_address_result) { true }
+
+        before(:each) do
+          allow(channel).to receive(:ack).with(delivery_tag, false)
+          allow(event_broadcaster).to receive(:broadcast).with(individual_drop_subscriber_address_properties, "a body value for the resource")
+        end
+
+        it_should_behave_like "a listener consuming the message"
+        it_should_behave_like "a listener recording the event outcome", :individual_drop_subscriber_address_properties, "a body value for the resource"
+      end
 
       describe "with an invalid update" do
         before :each do

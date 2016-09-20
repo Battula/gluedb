@@ -17,7 +17,8 @@ describe Listeners::BrokerUpdatedListener do
     :name_middle => "Phred",
     :name_pfx => "Dr",
     :name_sfx => "III",
-    :npn => "2068981"
+    :npn => "2068981",
+    :b_type => "broker"
   } }
   let(:mock_requestor) { double }
   let(:r_di) { double }
