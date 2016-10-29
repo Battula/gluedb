@@ -2,7 +2,7 @@
 
 $logger = Logger.new("#{Rails.root}/log/update_policy_termination_dates#{Time.now.to_s.gsub(' ', '')}.log")
 
-file_path = ""
+file_path = "redmine-11449_silent_cancels.csv"
 
 $logger.info "policy.id,policy.aasm_state,expected_termination_date,all enrollees data (m_id,coverage_end date)"
 
