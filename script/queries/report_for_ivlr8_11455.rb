@@ -3,14 +3,14 @@ batch_size = 500
 offset = 0
 family_count = Family.count
 
-csv =CSV.open("/Users/Varun/Desktop/reports/oct_18/11455_export_glue_plan_family_no_dependents.csv", "w")
+csv =CSV.open("/Users/Varun/Desktop/reports/nov_14/11455_export_glue_plan_family_no_dependents.csv", "w")
 
 csv << %w(family.e_case_id policy.eg_id policy.plan.name policy.renewal_plan.name hbx_enrollment.policy.policy_start policy.aasm_state policy.plan.coverage_type policy.plan.metal_level
-        person.authority_member_id person.authority_member.is_incarcerated person.authority_member.citizen_status
+        person.authority_member_id person.name_full person.mailing_address person.authority_member.is_incarcerated person.authority_member.citizen_status
         person.authority_member.is_state_resident is_dependent is_responsible_party?)
 
 def add_to_csv(csv, family, policy, person, is_dependent=false, is_responsible_party=false)
-  csv << [family.try(:e_case_id), policy.try(:eg_id), policy.plan.name, policy.plan.try(:renewal_plan).try(:name), policy.policy_start, policy.aasm_state, policy.plan.coverage_type, policy.plan.metal_level, person.authority_member_id,
+  csv << [family.try(:e_case_id), policy.try(:eg_id), policy.plan.name, policy.plan.try(:renewal_plan).try(:name), policy.policy_start, policy.aasm_state, policy.plan.coverage_type, policy.plan.metal_level, person.authority_member_id, person.name_full, person.mailing_address.full_address,
           person.authority_member.try(:is_incarcerated), person.authority_member.try(:citizen_status),
           person.authority_member.try(:is_state_resident)] + [is_dependent, is_responsible_party]
 end
