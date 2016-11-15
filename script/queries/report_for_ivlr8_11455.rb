@@ -25,7 +25,7 @@ while offset < family_count
       next if policy.nil?
       next if policy.policy_start < Date.new(2016, 01, 01)
       next if !policy.is_active?
-      next if (policy.applied_aptc != 0) || (policy.plan.market_type == 'shop')
+      next if (policy.applied_aptc != 0) || (policy.plan.market_type == 'shop') || (policy.plan.market_type == nil)
       person = policy.subscriber.person
 
       add_to_csv(csv, family, policy, person, false, false)
