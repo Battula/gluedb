@@ -1,8 +1,8 @@
 require 'csv'
 
 namespace :migrations do 
-  namespace :update_aptc_amounts do 
-    filename = ''
+  task :update_aptc_amounts => :environment do 
+    filename = 'redmine-12849_aptc_corrections.csv'
     CSV.foreach(filename, headers: true) do |row|
       policy = Policy.where(eg_id: row["enrollment_group_id"]).first
       policy.applied_aptc = row["CURAM 2017 APTC"].to_d
