@@ -39,7 +39,7 @@ module BusinessProcesses
       if renewal_candidates.any?
         renewal_candidates.each do |rc|
           if plan.carrier_id == rc.plan.carrier_id
-            return "urn:openhbx:terms:v1:enrollment#change_product"
+            return "urn:openhbx:terms:v1:enrollment#active_renew"
           end
         end
       end

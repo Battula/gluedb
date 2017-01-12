@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'viewing a person' do
+feature 'viewing a person', :dbclean => :after_each do
   scenario 'by clicking on the person name in list' do
     user = create :user
     visit root_path

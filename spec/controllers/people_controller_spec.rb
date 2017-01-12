@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PeopleController do
+describe PeopleController, :dbclean => :after_each do
   before(:each) do
     @user = create :user, :admin
     sign_in @user

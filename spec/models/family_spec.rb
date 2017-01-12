@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Family do
+describe Family, :dbclean => :after_each do
 
   let(:p0) { Person.create!(name_first: "Dan", name_last: "Aurbach") }
   let(:p1) { Person.create!(name_first: "Patrick", name_last: "Carney") }

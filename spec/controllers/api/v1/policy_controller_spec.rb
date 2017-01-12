@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::PoliciesController do
+describe Api::V1::PoliciesController, :dbclean => :after_each do
   login_user
 
   describe 'GET show' do

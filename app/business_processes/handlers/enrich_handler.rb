@@ -1,6 +1,6 @@
 module Handlers
   class EnrichHandler < Base
-    include EnrollmentEventXmlHelper
+    include ::Handlers::EnrollmentEventXmlHelper
 
     XML_NS = { "cv" => "http://openhbx.org/api/terms/1.0" }
 
@@ -15,7 +15,6 @@ module Handlers
       end
     end
 
-    protected
     def duplicate_context(context, event_xml)
       new_context = context.clone
       new_context.event_message = event_xml

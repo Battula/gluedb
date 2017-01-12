@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe HandlePolicyNotification::FindInteractingPolicies do
+describe HandlePolicyNotification::FindInteractingPolicies, :dbclean => :after_each do
   describe ".call" do
     let(:member_detail_collection) { double }
     let(:employer_details) { double(found_employer: employer) }

@@ -1,0 +1,2 @@
+DuplicateMethodCall:
+  max_calls: 2

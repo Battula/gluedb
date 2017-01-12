@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'viewing list of people' do
+feature 'viewing list of people', :dbclean => :after_each do
   scenario 'when there are many people' do
     user = create :user
     visit root_path

@@ -1,7 +1,7 @@
 require 'rails_helper'
 require File.join(Rails.root, "script", "queries", "subscribers_no_addresses")
 
-describe 'find_previous_home_addresses' do
+describe 'find_previous_home_addresses', :dbclean => :after_each do
 	it 'should return an empty array if the person has not been updated' do
 		person = FactoryGirl.create :person
 		expect(find_previous_home_addresses(person)).to eq []

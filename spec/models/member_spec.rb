@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Member do
+describe Member, :dbclean => :after_each do
   before(:each) do
     @p1 = Person.create!(
           name_pfx: "Mrs",
@@ -59,7 +59,7 @@ describe Member do
 
 end
 
-describe Member do
+describe Member, :dbclean => :after_each do
   let(:dob) { "19640229" }
   let(:name_last) { "LaName" }
   let(:name_first) { "Exampile" }

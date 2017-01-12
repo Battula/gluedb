@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Enrollee do
+describe Enrollee, :dbclean => :after_each do
   describe '#member' do
     let(:enrollee) { Enrollee.new(relationship_status_code: 'self', employment_status_code: 'active', benefit_status_code: 'active') }
     let(:id_to_lookup) { '666' }

@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'irs_groups/irs_group_builder'
 
-describe IrsGroupBuilder do
+describe IrsGroupBuilder, :dbclean => :after_each do
 
   before(:each) do
     @family = Family.new({submitted_at:DateTime.now})

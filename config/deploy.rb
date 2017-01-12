@@ -3,9 +3,9 @@ set :application, "DCHBX GlueDB"
 # set :sudo, "sudo -u nginx"
 set :scm, :git
 set :repository,  "https://github.com/dchbx/gluedb.git"
-set :branch,      "release-3.7"
-set :rails_env,       "production"
-set :deploy_to,       "/var/www/deployments/gluedb"
+set :branch,      "release-4.0"
+set :rails_env,   "production"
+set :deploy_to,   "/var/www/deployments/gluedb"
 set :deploy_via, :copy
 
 
@@ -34,11 +34,14 @@ namespace :deploy do
   task :finalize_update do
     run "rm -f #{release_path}/config/mongoid.yml"
     run "ln -s #{deploy_to}/shared/config/mongoid.yml #{release_path}/config/mongoid.yml"
+    run "rm -f #{release_path}/config/exchange.yml"
+    run "ln -s #{deploy_to}/shared/config/mongoid.yml #{release_path}/config/mongoid.yml"
     run "ln -s #{deploy_to}/shared/config/exchange.yml #{release_path}/config/exchange.yml"
     run "ln -s #{deploy_to}/shared/pids #{release_path}/pids"
     run "rm -rf #{release_path}/log"
     run "ln -s #{deploy_to}/shared/log #{release_path}/log"
     run "ln -s #{deploy_to}/shared/eye #{release_path}/eye"
+    run "cd #{release_path} && bundle exec rails r -e production script/amqp/configure_amqp_topology.rb"
   end
 
   desc "Restart nginx and unicorn"

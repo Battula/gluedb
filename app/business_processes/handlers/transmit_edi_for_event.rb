@@ -37,7 +37,7 @@ module Handlers
             publish_to_bus(context.amqp_connection, enrollment_event_cv, x12_xml)
           rescue Exception => e
             context.errors.add(:event_xml, e.message)
-            context.errors.add(:event_xml, action_xml)
+            context.errors.add(:event_xml, render_result)
           end
         end
       end

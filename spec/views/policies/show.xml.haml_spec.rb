@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "policies.show.xml" do
+describe "policies.show.xml", :dbclean => :after_each do
   let(:policy) { FactoryGirl.create(:policy) }
   let(:subscriber) { FactoryGirl.create(:person) }
   let(:dependant) { FactoryGirl.create(:person) }

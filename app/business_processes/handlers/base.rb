@@ -11,9 +11,23 @@ module Handlers
     end
 
     def call(context)
-      current_process_history = context.business_process_history || []
-      context.business_process_history = current_process_history + [self.class.name]
+      if context.kind_of?(Array)
+        context.each do |item|
+          update_process_histories(item)
+        end
+      else
+        update_process_histories(context)
+      end
       @app.call(context)
+    end
+
+    def update_process_histories(item)
+      if item.respond_to?(:update_business_process_history)
+        item.update_business_process_history(self.class.name)
+      else
+        current_process_history = item.business_process_history || []
+        item.business_process_history = current_process_history + [self.class.name]
+      end
     end
 
     # TODO - Examine client chain to catch any requests that go unhandled

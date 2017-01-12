@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Person do
+describe Person, :dbclean => :after_each do
   describe "instantiates object." do
 		it "sets and gets all basic model fields" do
       psn = Person.new(

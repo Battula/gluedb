@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'user sign in' do
+feature 'user sign in', :dbclean => :after_each do
   given(:user) { create :user }
   scenario 'with valid credentials' do
     visit root_path

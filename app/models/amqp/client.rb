@@ -39,7 +39,7 @@ module Amqp
           :inspected => err.inspect,
           :backtrace => err.backtrace.join("\n")
         },
-        :original_payload => payload
+        :original_payload => payload.to_s.encode('UTF-8', undef: :replace, replace: '')
       }
       @channel.default_exchange.publish(JSON.dump(error_message), error_properties(@processing_failed_queue, delivery_info, properties))
       channel.acknowledge(delivery_info.delivery_tag, false)

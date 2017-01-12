@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'matching a person' do
+describe 'matching a person', :dbclean => :after_each do
   let(:person) { Person.new(name_last: last_name, name_first: first_name, members: members, emails: emails) }
   let(:member) { Member.new(ssn: member_ssn, gender: 'male', dob: dob, hbx_member_id: member_id) }
   let(:members) { [member] }

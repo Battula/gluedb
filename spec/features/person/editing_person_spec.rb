@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'editing a person' do
+feature 'editing a person', :dbclean => :after_each do
   background do
     @person = create :person
     user = create :user, :admin

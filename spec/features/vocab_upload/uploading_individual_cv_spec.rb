@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'uploading individual CV' do
+feature 'uploading individual CV', :dbclean => :after_each do
   given(:premium) do
     PremiumTable.new(
       rate_start_date: Date.new(2014, 1, 1),

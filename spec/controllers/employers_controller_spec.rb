@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe EmployersController do
+describe EmployersController, :dbclean => :after_each do
   login_user
 
   describe 'GET new' do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Queries::MemberByHbxIdQuery do
+describe Queries::MemberByHbxIdQuery, :dbclean => :after_each do
   let(:existing_member) { Member.new(gender: 'male') }
   let(:lookup_id) { '666' }
   let(:different_id) { '777' }

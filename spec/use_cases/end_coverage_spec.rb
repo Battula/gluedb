@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe EndCoverage do
+describe EndCoverage, :dbclean => :after_each do
   subject(:end_coverage) { EndCoverage.new(action_factory, policy_repo) }
 
   let(:request) do

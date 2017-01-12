@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe DashboardsController do
+describe DashboardsController, :dbclean => :after_each do
   login_user
 
   describe 'GET index' do

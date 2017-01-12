@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe CarriersController do
+describe CarriersController, :dbclean => :after_each do
   login_user
 
   describe 'GET index' do

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'User sign up' do
+feature 'User sign up', :dbclean => :after_each do
   scenario 'will valid info' do
     user = build :user
 

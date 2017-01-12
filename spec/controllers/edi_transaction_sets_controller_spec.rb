@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe EdiTransactionSetsController do
+describe EdiTransactionSetsController, :dbclean => :after_each do
   login_user
 
   describe 'GET errors' do

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::EmployersController, :type => :controller do
+describe Api::V1::EmployersController, :type => :controller, :dbclean => :after_each do
   login_user
 
   describe 'GET show' do

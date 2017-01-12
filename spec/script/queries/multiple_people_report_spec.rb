@@ -1,7 +1,7 @@
 require 'rails_helper'
 require File.join(Rails.root, "script", "queries", "multiple_people_report")
 
-describe 'find_matches' do
+describe 'find_matches', :dbclean => :after_each do
 	it 'should return an array with objects of the class Person' do
 		person = FactoryGirl.create :person
 		carrier = FactoryGirl.create :carrier
@@ -14,7 +14,7 @@ describe 'find_matches' do
 	end
 end
 
-describe 'find_employers' do
+describe 'find_employers', :dbclean => :after_each do
 	carrier = FactoryGirl.create :carrier
 	plan = FactoryGirl.create :plan
 

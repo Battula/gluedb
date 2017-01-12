@@ -8,7 +8,7 @@ shared_examples_for "a person_demographics" do
   end
 end
 
-describe "people/_person_demographics.xml" do
+describe "people/_person_demographics.xml", :dbclean => :after_each do
 
   let(:render_result) {
     render :partial => "people/person_demographics", :formats => [:xml], :object => person

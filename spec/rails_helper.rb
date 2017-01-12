@@ -45,12 +45,22 @@ RSpec.configure do |config|
     DatabaseCleaner[:mongoid].strategy = :truncation
   end
 
-  config.before(:each) do
-    DatabaseCleaner[:mongoid].start
+#  config.before(:each) do
+#    DatabaseCleaner[:mongoid].start
+#  end
+
+#  config.after(:each) do
+#    DatabaseCleaner[:mongoid].clean
+#  end
+
+  config.after(:example, :dbclean => :after_each) do
+    DatabaseCleaner.clean
   end
 
-  config.after(:each) do
-    DatabaseCleaner[:mongoid].clean
+  config.around(:example, :dbclean => :around_each) do |example|
+    DatabaseCleaner.clean
+    example.run
+    DatabaseCleaner.clean
   end
 
   config.include LegacySpec

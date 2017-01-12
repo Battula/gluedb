@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'uploading a cancel/term CV' do
+feature 'uploading a cancel/term CV', :dbclean => :after_each do
   given(:premium) do
     PremiumTable.new(
       rate_start_date: Date.new(2014, 1, 1),

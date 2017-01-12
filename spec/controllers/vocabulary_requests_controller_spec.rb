@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", 'rails_helper'))
 
-describe VocabularyRequestsController do
+describe VocabularyRequestsController, :dbclean => :after_each do
   login_user
   let(:mock_vr) { double }
 

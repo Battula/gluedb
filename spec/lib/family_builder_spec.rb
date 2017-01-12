@@ -1,7 +1,7 @@
 require 'rails_helper'
 require Rails.root.join('lib', 'import_families')
 
-describe FamilyBuilder do
+describe FamilyBuilder, :dbclean => :after_each do
 
   let(:person_mapper) {
     double();
