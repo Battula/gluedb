@@ -88,7 +88,7 @@ class EndCoverage
     subscriber = @policy.subscriber
     start_date  = @policy.subscriber.coverage_start
     plan = @policy.plan
-    skip_recalc = affected_enrollee_ids.include?(subscriber.m_id) && (plan.year == 2016)
+    skip_recalc = affected_enrollee_ids.include?(subscriber.m_id) && (plan.year >= 2016)
 
     if @policy.is_shop? && !skip_recalc
       employer = @policy.employer
@@ -97,7 +97,7 @@ class EndCoverage
       plan_year = employer.plan_year_of(start_date)
       raise PremiumCalcError, "policy start date #{start_date} does not fall into any plan years of #{employer.name} (fein: #{employer.fein})" if plan_year.nil?
     else
-      raise PremiumCalcError, "policy start date #{start_date} not in rate table for #{plan.year} plan #{plan.name} with hios #{plan.hios_plan_id} " unless plan.year == start_date.year
+      raise PremiumCalcError, "policy start date #{start_date} not in rate table for #{plan.year} plan #{plan.name} with hios #{plan.hios_plan_id} " unless plan.year == start_date.year || (start_date.year >= 2016 && @policy.is_shop?)
     end
 
     premium_calculator = Premiums::PolicyCalculator.new

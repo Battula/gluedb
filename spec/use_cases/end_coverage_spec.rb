@@ -149,6 +149,27 @@ describe EndCoverage, :dbclean => :after_each do
       end
     end
 
+    context "on shop 2017 enrollments" do
+      let(:affected_enrollee_ids) { [ subscriber.m_id ] }
+      let(:operation) { 'cancel' }
+      let(:coverage_start) { Date.new(2017, 1, 2)}
+
+      before{
+        plan.update_attribute(:year, 2017)
+        policy.update_attributes!(total_responsible_amount: 300, total_premium_amount: 300)
+      }
+
+      after{
+        plan.update_attribute(:year, 2015)
+        policy.update_attributes!(total_responsible_amount: 0)
+      }
+
+      it "shouldn't touch any of the premiums" do
+        end_coverage.execute(request)
+        expect(policy.total_responsible_amount).to eql(policy.total_premium_amount)
+      end
+    end
+
     context 'when subscriber\'s coverage ends' do
       let(:affected_enrollee_ids) { [ subscriber.m_id ] }
 
