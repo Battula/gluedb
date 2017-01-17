@@ -18,6 +18,7 @@ Gluedb::Application.routes.draw do
   # end
   resources :employer_events, only: [:index] do
     collection do
+      post :publish
       get :download
     end
   end

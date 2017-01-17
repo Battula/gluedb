@@ -28,6 +28,14 @@ describe Policy, :dbclean => :after_each do
     it { should respond_to attribute }
   end
 
+  describe "created with a factory" do
+    subject { create(:policy) }
+
+    it "has the correct default hbx_enrollment_ids" do
+      expect(subject.hbx_enrollment_ids).to eq [subject.eg_id]
+    end
+  end
+
   describe '#subscriber' do
     let(:enrollee) { build(:enrollee, relationship_status_code: relationship) }
     before { policy.enrollees = [ enrollee ] }
@@ -556,4 +564,5 @@ describe Policy, :dbclean => :after_each do
       end
     end
   end
+
 end

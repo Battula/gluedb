@@ -13,6 +13,10 @@ module EmployerEvents
       @end_timestamp = nil
     end
 
+    def empty?
+      @empty
+    end
+
     def file_name
       return nil if @begin_timestamp.blank?
       return nil if @end_timestamp.blank?

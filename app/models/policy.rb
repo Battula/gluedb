@@ -29,6 +29,7 @@ class Policy
   field :aasm_state, type: String
   field :updated_by, type: String
   field :is_active, type: Boolean, default: true
+  field :hbx_enrollment_ids, type: Array
 
 
   validates_presence_of :eg_id
@@ -60,6 +61,7 @@ class Policy
 
   has_many :csv_transactions, :class_name => "Protocols::Csv::CsvTransaction"
 
+  index({:hbx_enrollment_ids => 1})
   index({:eg_id => 1})
   index({:aasm_state => 1})
   index({:eg_id => 1, :carrier_id => 1, :plan_id => 1})
@@ -684,6 +686,7 @@ class Policy
   protected
   def generate_enrollment_group_id
     self.eg_id = self.eg_id || self._id.to_s
+    self.hbx_enrollment_ids = [self.eg_id]
   end
 
   private

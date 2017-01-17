@@ -86,7 +86,7 @@ module BusinessProcesses
         renewal_candidates.each do |rc|
           # Add a termination for the old carrier for each switch
           if plan.carrier_id != rc.plan.carrier_id
-            terms << BusinessProcess::EnrollmentTermination.new(rc.eg_id, subscriber_start - 1.day, c_pol.active_member_ids)
+            terms << ::BusinessProcesses::EnrollmentTermination.new(rc.eg_id, subscriber_start - 1.day, c_pol.active_member_ids)
           end  
         end
       end

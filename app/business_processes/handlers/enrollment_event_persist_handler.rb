@@ -5,7 +5,10 @@ module Handlers
     # updating the objects in glue accordingly
     # ::EnrollmentAction::Base -> ::EnrollmentAction::Base
     def call(context)
+      persisted_actions = context.select(&:persist)
+      persisted_actions.map do |pa|
+        super(pa)
+      end
     end
-
   end
 end

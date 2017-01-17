@@ -86,7 +86,7 @@ module BusinessProcesses
                            if determine_market(enrollment_event_xml) == "individual"
                              nil
                            else
-                             Maybe.new(policy_cv).policy.policy_enrollment.shop_market.employer_link.id.strip.split("#").last.value
+                             Maybe.new(policy_cv).policy_enrollment.shop_market.employer_link.id.strip.split("#").last.value
                            end
                          end
     end

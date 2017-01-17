@@ -69,6 +69,25 @@ class EmployerEvent
     carrier_file.result
   end
 
+  def self.with_digest_payloads
+    events = self.order_by(event_time: 1)
+    carrier_files = Carrier.all.map do |car|
+      EmployerEvents::CarrierFile.new(car)
+    end
+    events.each do |ev|
+      event_renderer = EmployerEvents::Renderer.new(ev)
+      carrier_files.each do |car|
+        car.render_event_using(event_renderer)
+      end
+    end
+    carrier_files.each do |cf|
+      unless cf.empty?
+        f_name, data = cf.result
+        yield data
+      end
+    end
+  end
+
   def self.get_all_digests
     events = self.order_by(event_time: 1)
     carrier_files = Carrier.all.map do |car|
