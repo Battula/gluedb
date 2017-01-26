@@ -18,10 +18,10 @@ class MultipleAptcImporter
     CSV.foreach(@file_path, :headers => :first_row) do |row|
       begin
         policy = Policy.find(row[0])
-        policy.aptc_credits.build({start_on: Date.strptime(row[2], "%m/%d/%Y"),
+        aptc_credit = policy.aptc_credits.build({start_on: Date.strptime(row[2], "%m/%d/%Y"),
                                    end_on: Date.strptime(row[3], "%m/%d/%Y"),
                                    aptc: row[1]})
-        policy.save!
+        aptc_credit.save!
         @policies << policy
         @logger.info "Processed Policy:#{policy.id} with APTC: " + policy.aptc_credits.inspect
       rescue Exception => e
@@ -31,5 +31,5 @@ class MultipleAptcImporter
   end
 end
 
-aptc_importer = MultipleAptcImporter.new('/Users/CitadelFirm/Downloads/2014MultiAPTCImportCSV-20150716-1200.csv')
+aptc_importer = MultipleAptcImporter.new('1095_KP_2016_MidYear_APTC_ScriptUpdates.csv')
 aptc_importer.apply_multiple_aptc
